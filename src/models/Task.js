@@ -18,6 +18,14 @@ const taskSchema = new mongoose.Schema(
       enum: ['pending', 'in-progress', 'completed'],
       default: 'pending'
     },
+    deadline: {
+      type: Date,
+      default: null
+    },
+    emailReminderSent: {
+      type: Boolean,
+      default: false
+    },
     user: {
       type: mongoose.Schema.ObjectId,
       ref: 'User',
