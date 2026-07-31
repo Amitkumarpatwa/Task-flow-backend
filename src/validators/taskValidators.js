@@ -20,6 +20,9 @@ exports.createTaskValidation = [
   body('status')
     .optional()
     .isIn(['pending', 'in-progress', 'completed']).withMessage('Invalid status value'),
+  body('deadline')
+    .optional({ values: 'null' })
+    .isISO8601().withMessage('Deadline must be a valid date'),
   validateResults
 ];
 
@@ -36,5 +39,8 @@ exports.updateTaskValidation = [
   body('status')
     .optional()
     .isIn(['pending', 'in-progress', 'completed']).withMessage('Invalid status value'),
+  body('deadline')
+    .optional({ values: 'null' })
+    .isISO8601().withMessage('Deadline must be a valid date'),
   validateResults
 ];

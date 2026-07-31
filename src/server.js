@@ -10,9 +10,13 @@ process.on('uncaughtException', err => {
 
 const app = require('./app');
 const connectDB = require('./config/db');
+const { initCronJobs } = require('./config/cronJobs');
 
 // Connect to Database
-connectDB();
+connectDB().then(() => {
+  // Initialize cron jobs after DB is connected
+  initCronJobs();
+});
 
 const port = process.env.PORT || 5000;
 const server = app.listen(port, () => {
