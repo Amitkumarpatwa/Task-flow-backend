@@ -17,13 +17,10 @@ class AuthService {
       throw new AppError('Email is already in use', 400);
     }
 
-    // Role cannot be explicitly set to admin by default unless allowed by your business rules
-    // For this simple project, we might let them specify or strictly enforce 'user'
     const newUser = await userRepository.create({
       name: userData.name,
       email: userData.email,
-      password: userData.password,
-      role: userData.role || 'user'
+      password: userData.password
     });
 
     // Remove password from output

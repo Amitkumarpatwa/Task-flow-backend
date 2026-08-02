@@ -6,10 +6,10 @@ class AuthController {
   // @route   POST /api/v1/auth/register
   // @access  Public
   register = catchAsync(async (req, res, next) => {
-    const { name, email, password, role } = req.body;
+    const { name, email, password } = req.body;
     
     // Pass to service layer
-    const result = await authService.registerUser({ name, email, password, role });
+    const result = await authService.registerUser({ name, email, password });
 
     res.status(201).json({
       status: 'success',
