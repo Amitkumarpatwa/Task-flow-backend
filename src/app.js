@@ -8,6 +8,7 @@ const path = require('path');
 
 const authRoutes = require('./routes/api/v1/authRoutes');
 const taskRoutes = require('./routes/api/v1/taskRoutes');
+const cronRoutes = require('./routes/api/v1/cronRoutes');
 const AppError = require('./utils/AppError');
 const globalErrorHandler = require('./middlewares/errorMiddleware');
 
@@ -37,6 +38,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 // 3) ROUTES
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/tasks', taskRoutes);
+app.use('/api/v1/cron', cronRoutes);
 
 // Health check route
 app.get('/', (req, res) => {

@@ -1,5 +1,6 @@
 const taskRepository = require('../repositories/taskRepository');
 const AppError = require('../utils/AppError');
+const { checkAndSendDeadlineReminders } = require('./notificationService');
 
 class TaskService {
   async createTask(userId, taskData) {
@@ -7,6 +8,16 @@ class TaskService {
       ...taskData,
       user: userId
     });
+
+    // If task has a deadline, trigger a non-blocking check for instant reminder if due within 24h
+    if (newTask.deadline) {
+      setImmediate(() => {
+        checkAndSendDeadlineReminders().catch((err) =>
+          console.error('Instant reminder check error:', err.message)
+        );
+      });
+    }
+
     return newTask;
   }
 
@@ -43,6 +54,16 @@ class TaskService {
     }
 
     const updatedTask = await taskRepository.update(taskId, updateData);
+
+    // If updated task has a deadline, trigger non-blocking check
+    if (updatedTask && updatedTask.deadline) {
+      setImmediate(() => {
+        checkAndSendDeadlineReminders().catch((err) =>
+          console.error('Instant reminder check error:', err.message)
+        );
+      });
+    }
+
     return updatedTask;
   }
 
