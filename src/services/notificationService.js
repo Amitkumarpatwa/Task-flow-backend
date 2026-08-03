@@ -1,4 +1,5 @@
 const Task = require('../models/Task');
+require('../models/User'); // Register User model for populate
 const { sendEmail, buildDeadlineReminderEmail } = require('./emailService');
 
 /**
