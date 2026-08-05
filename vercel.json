@@ -2,11 +2,15 @@
   "version": 2,
   "crons": [
     {
-      "path": "/api/v1/cron/check-deadlines",
+      "path": "/api/cron/check-deadlines",
       "schedule": "0 * * * *"
     }
   ],
   "rewrites": [
+    {
+      "source": "/api/cron/check-deadlines",
+      "destination": "/api/cron/check-deadlines.js"
+    },
     {
       "source": "/(.*)",
       "destination": "/api/index.js"
