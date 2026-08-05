@@ -38,7 +38,11 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 // 3) ROUTES
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/tasks', taskRoutes);
+
+// Cron routes (supported under all URL prefixes)
 app.use('/api/v1/cron', cronRoutes);
+app.use('/v1/cron', cronRoutes);
+app.use('/cron', cronRoutes);
 
 // Health check route
 app.get('/', (req, res) => {

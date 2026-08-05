@@ -3,9 +3,7 @@ const { checkAndSendDeadlineReminders } = require('../../../services/notificatio
 
 const router = express.Router();
 
-// GET /api/v1/cron/check-deadlines
-// Endpoint triggered automatically by Vercel Cron Jobs (or external cron services)
-router.get('/check-deadlines', async (req, res, next) => {
+const handleCron = async (req, res, next) => {
   try {
     console.log('⏰ Vercel Cron: Triggered check-deadlines endpoint');
     await checkAndSendDeadlineReminders();
@@ -16,6 +14,10 @@ router.get('/check-deadlines', async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-});
+};
+
+// Support /check-deadlines, /api/v1/cron/check-deadlines, and root /
+router.get('/check-deadlines', handleCron);
+router.get('/', handleCron);
 
 module.exports = router;
