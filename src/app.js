@@ -39,7 +39,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/tasks', taskRoutes);
 
-// Cron routes (for local dev; on Vercel, the standalone api/cron/check-deadlines.js handles this)
+// Cron routes (Vercel cron hits /api/v1/cron/check-deadlines)
 app.use('/api/v1/cron', cronRoutes);
 
 // Health check route
