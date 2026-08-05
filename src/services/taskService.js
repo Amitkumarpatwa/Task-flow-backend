@@ -10,19 +10,40 @@ class TaskService {
    */
   async _sendInstantReminderIfNeeded(task, userId) {
     try {
-      if (!task.deadline || task.emailReminderSent) return;
+      if (!task.deadline) {
+        console.log(`ℹ️ [Email System] Task "${task.title}" has no deadline. Email skipped.`);
+        return;
+      }
+      if (task.emailReminderSent) {
+        console.log(`ℹ️ [Email System] Task "${task.title}" already had an email reminder sent.`);
+        return;
+      }
 
       const now = new Date();
       const deadline = new Date(task.deadline);
       const hoursUntilDeadline = (deadline - now) / (1000 * 60 * 60);
 
+      console.log(`🔍 [Email System] Checking deadline for "${task.title}": ${hoursUntilDeadline.toFixed(2)} hours left.`);
+
       // Only send if deadline is within 24 hours and in the future
-      if (hoursUntilDeadline <= 0 || hoursUntilDeadline > 24) return;
+      if (hoursUntilDeadline <= 0) {
+        console.log(`ℹ️ [Email System] Deadline is in the past (${hoursUntilDeadline.toFixed(2)}h). Email skipped.`);
+        return;
+      }
+      if (hoursUntilDeadline > 24) {
+        console.log(`ℹ️ [Email System] Deadline is more than 24h away (${hoursUntilDeadline.toFixed(2)}h). Email will be sent later via Cron job.`);
+        return;
+      }
 
       // Populate user info for the email
       const User = require('../models/User');
       const user = await User.findById(userId).select('name email');
-      if (!user || !user.email) return;
+      if (!user || !user.email) {
+        console.log(`❌ [Email System] User email not found for userId: ${userId}`);
+        return;
+      }
+
+      console.log(`📧 [Email System] Attempting to send email to ${user.email} from ${process.env.EMAIL_FROM || 'TaskFlow <noreply@send.amitpatwa.tech>'}...`);
 
       const html = buildDeadlineReminderEmail(user.name, [task]);
 
@@ -38,10 +59,9 @@ class TaskService {
         { $set: { emailReminderSent: true } }
       );
 
-      console.log(`⚡ Instant reminder sent to ${user.email} for task "${task.title}"`);
+      console.log(`⚡ [Email System] Instant reminder sent successfully to ${user.email} for task "${task.title}"`);
     } catch (err) {
-      // Don't let email failure block the task creation/update response
-      console.error('Instant reminder error (non-blocking):', err.message);
+      console.error(`❌ [Email System Error] Failed to send instant reminder for task "${task?.title}":`, err.message || err);
     }
   }
 

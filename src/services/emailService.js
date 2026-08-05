@@ -19,7 +19,7 @@ const sendEmail = async ({ to, subject, html }) => {
   try {
     const resend = getResendClient();
     const { data, error } = await resend.emails.send({
-      from: 'TaskFlow <onboarding@resend.dev>',
+      from: process.env.EMAIL_FROM || 'TaskFlow <noreply@send.amitpatwa.tech>',
       to,
       subject,
       html
