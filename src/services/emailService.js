@@ -1,7 +1,15 @@
 const { Resend } = require('resend');
 
-// Initialize Resend with API key
-const resend = new Resend(process.env.RESEND_API_KEY);
+/**
+ * Get Resend client instance safely
+ */
+const getResendClient = () => {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) {
+    throw new Error('RESEND_API_KEY is missing in environment variables');
+  }
+  return new Resend(apiKey);
+};
 
 /**
  * Send an email using Resend API
@@ -9,6 +17,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
  */
 const sendEmail = async ({ to, subject, html }) => {
   try {
+    const resend = getResendClient();
     const { data, error } = await resend.emails.send({
       from: 'TaskFlow <onboarding@resend.dev>',
       to,
