@@ -15,6 +15,7 @@ const { sendEmail, buildDeadlineReminderEmail } = require('./emailService');
 const checkAndSendDeadlineReminders = async () => {
   try {
     const now = new Date();
+    const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
     const twentyFourHoursLater = new Date(now.getTime() + 24 * 60 * 60 * 1000);
 
     console.log(`🔔 [${now.toISOString()}] Checking for tasks with upcoming deadlines...`);
@@ -22,13 +23,13 @@ const checkAndSendDeadlineReminders = async () => {
     // Find tasks that are:
     // - Not completed
     // - Have a deadline set
-    // - Deadline is between now and 24 hours from now
+    // - Deadline is between 1 hour ago and 24 hours from now
     // - Haven't already received an email reminder
     const upcomingTasks = await Task.find({
       status: { $ne: 'completed' },
       deadline: {
         $ne: null,
-        $gte: now,
+        $gte: oneHourAgo,
         $lte: twentyFourHoursLater
       },
       emailReminderSent: false
